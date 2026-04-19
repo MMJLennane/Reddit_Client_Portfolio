@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchPosts, selectStatus, selectError } from './features/posts/postsSlice';
 import PostsPage from './features/posts/PostsPage';
 import PostDetailPage from './features/posts/PostDetailPage';
-import Header from './components/Header';
 import SubredditSelector from './components/SubredditSelector/SubredditSelector.JSX';
 
 function App() {
