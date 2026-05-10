@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchPosts, selectStatus, selectError } from './features/posts/postsSlice';
 import PostsPage from './features/posts/PostsPage';
 import PostDetailPage from './features/posts/PostDetailPage';
+import Header from './components/Header';
 import SubredditSelector from './components/SubredditSelector/SubredditSelector.JSX';
 
 function App() {
@@ -20,7 +21,7 @@ function App() {
   return (
     <div className="app-shell">
 
-      <h1>BattleTech<span>Reddit</span>Viewer</h1>
+      <Header />
       <SubredditSelector selectedSubreddit={subreddit} onSubredditChange={setSubreddit} />
       {status === 'failed' && (
         <div className="app-error">

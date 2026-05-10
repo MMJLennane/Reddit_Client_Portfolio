@@ -3,8 +3,11 @@ import { Link } from 'react-router-dom';
 function Header() {
   return (
     <header className="app-header">
-      <h1><Link to="/">Reddit Client</Link></h1>
-      <p>React + Redux Reddit Browser</p>
+      <div className="hero-overlay" />
+      <div className="hero-copy">
+        <h1><Link to="/">BattleTech Reddit & Official News</Link></h1>
+        <p>Search Reddit threads and follow official developer updates in one place.</p>
+      </div>
     </header>
   );
 }

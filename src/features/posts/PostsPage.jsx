@@ -17,6 +17,24 @@ function PostsPage() {
   const selectedCategory = useSelector((state) => state.posts.selectedCategory);
   const searchTerm = useSelector((state) => state.posts.searchTerm);
 
+  const developerNews = [
+    {
+      title: 'Official BattleTech news',
+      url: 'https://www.paradoxinteractive.com/games/battletech/news',
+      source: 'Paradox Interactive',
+    },
+    {
+      title: 'Harebrained Schemes updates',
+      url: 'https://www.harebrained-schemes.com/',
+      source: 'Harebrained Schemes',
+    },
+    {
+      title: 'BattleTech Steam news',
+      url: 'https://store.steampowered.com/news/app/637090',
+      source: 'Steam News',
+    },
+  ];
+
   useEffect(() => {
     dispatch(setSelectedCategory(subreddit));
     dispatch(fetchPosts({ subreddit, searchTerm }));
@@ -52,6 +70,21 @@ function PostsPage() {
             </button>
           ))}
         </div>
+      </section>
+
+      <section className="developer-news">
+        <h2>Official developer news</h2>
+        <p>These links point to official BattleTech developer and publisher announcements beyond Reddit.</p>
+        <ul>
+          {developerNews.map((item) => (
+            <li key={item.url}>
+              <a href={item.url} target="_blank" rel="noreferrer">
+                {item.title}
+              </a>
+              <span>{item.source}</span>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section className="feed">

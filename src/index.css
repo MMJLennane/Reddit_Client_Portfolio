@@ -1,10 +1,82 @@
 * { box-sizing: border-box; }
 body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif; background: #081f3e; color: #fff; }
 .app-shell { min-height: 100vh; background: linear-gradient(110deg, #071024, #1b2c4c); }
-.app-header { padding: 1rem 2rem; border-bottom: 1px solid rgba(255,255,255,.14); position: sticky; top:0; background: rgba(7,16,36,.9); backdrop-filter: blur(8px); z-index: 100; }
-.app-header h1 { margin: 0; font-size: 1.7rem; }
-.app-header p { margin: .25rem 0 0; font-size: .95rem; color: #9ab8e4; }
+.app-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 240px;
+  padding: 1.5rem 1rem;
+  background-image: url('./assets/games-icons-1-battletech-png-icon.jpg');
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  text-align: center;
+  overflow: hidden;
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 12, 30, 0.65);
+}
+.hero-copy {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+}
+.hero-copy h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  letter-spacing: -0.03em;
+}
+.hero-copy p {
+  margin: 0.75rem auto 0;
+  max-width: 700px;
+  font-size: 1rem;
+  color: #d7e4ff;
+}
 .posts-page { max-width: 1000px; margin: 1rem auto; padding: 0 1rem; }
+.developer-news {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 1rem 1.15rem;
+  margin-bottom: 1rem;
+}
+.developer-news h2 {
+  margin-top: 0;
+  color: #f6f8ff;
+}
+.developer-news p {
+  margin: 0.35rem 0 1rem;
+  color: #c9d6f9;
+}
+.developer-news ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+.developer-news li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+.developer-news a {
+  color: #a9d4ff;
+  font-weight: 600;
+  text-decoration: none;
+}
+.developer-news a:hover {
+  text-decoration: underline;
+}
+.developer-news span {
+  color: #9ab8e4;
+  font-size: 0.95rem;
+}
 .controls { display: grid; gap: 0.75rem; }
 .search-form { display:flex; gap:.5rem; }
 .search-form input { flex:1; padding:.6rem .8rem; border-radius:8px; border:none; }
@@ -13,7 +85,33 @@ body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, sans-s
 .filters button { background: #264c82; border:transparent; border-radius:999px; color:#dbe9ff; padding:.4rem .8rem; cursor:pointer; }
 .filters button.active { background:#0079d3; }
 .feed { margin-top:1rem; }
-.image-header {background-image: url('/src/assets/games-icons-1-battletech-png-icon.png'); background-size: cover; background-position: center; height: 200px; border-radius: 10px; margin-bottom: 1rem; }
+.image-header {
+  background-image: url('./assets/games-icons-1-battletech-png-icon.jpg');
+  background-size: cover;
+  background-position: center;
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  color: #fff;
+  text-align: center;
+  border-radius: 10px;
+  margin: 1rem auto;
+  text-shadow: 0 0 18px rgba(0, 0, 0, 0.65);
+  position: relative;
+}
+.image-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 8, 20, 0.45);
+  border-radius: inherit;
+}
+.image-header * {
+  position: relative;
+  z-index: 1;
+}
 .post-list { list-style:none; padding:0; margin:0; display:grid; gap:.8rem; }
 .post-card { display:flex; background: rgba(255,255,255,.05); border-radius:10px; padding:.9rem; align-items:center; gap:.8rem; cursor:pointer; transition: transform .1s ease, box-shadow .2s ease; }
 .post-card:hover { transform: translateY(-2px); box-shadow:0 8px 20px rgba(0,0,0,.22); }
