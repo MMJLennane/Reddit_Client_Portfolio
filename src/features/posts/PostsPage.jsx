@@ -33,6 +33,16 @@ function PostsPage() {
       url: 'https://store.steampowered.com/news/app/637090',
       source: 'Steam News',
     },
+    {
+      title: 'MechWarrior franchise news',
+      url: 'https://www.mechwarriorgame.com/news',
+      source: 'MechWarrior Official',
+    },
+    {
+      title: 'MechCommander legacy news',
+      url: 'https://www.mechcommander.com/',
+      source: 'MechCommander Official',
+    },
   ];
 
   useEffect(() => {
@@ -73,8 +83,8 @@ function PostsPage() {
       </section>
 
       <section className="developer-news">
-        <h2>Official developer news</h2>
-        <p>These links point to official BattleTech developer and publisher announcements beyond Reddit.</p>
+        <h2>Official BattleTech, MechWarrior, and MechCommander news</h2>
+        <p>These links point to official developer and publisher announcements beyond Reddit.</p>
         <ul>
           {developerNews.map((item) => (
             <li key={item.url}>
