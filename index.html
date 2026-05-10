@@ -9,5 +9,302 @@
     <h1 class="image-header">Matt's Battletech Reddit Roundup</h1>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+
+    <h2>src/App.jsx</h2>
+    <pre><code>import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPosts, selectStatus, selectError } from './features/posts/postsSlice';
+import PostsPage from './features/posts/PostsPage';
+import PostDetailPage from './features/posts/PostDetailPage';
+import Header from './components/Header';
+import SubredditSelector from './components/SubredditSelector/SubredditSelector.JSX';
+
+function App() {
+  const dispatch = useDispatch();
+  const status = useSelector(selectStatus);
+  const error = useSelector(selectError);
+  const navigate = useNavigate();
+  const [subreddit, setSubreddit] = useState('Battletech');
+
+  useEffect(() => {
+    dispatch(fetchPosts(subreddit));
+  }, [dispatch, subreddit]);
+
+  return (
+    &lt;div className="app-shell"&gt;
+
+      &lt;Header /&gt;
+      &lt;SubredditSelector selectedSubreddit={subreddit} onSubredditChange={setSubreddit} /&gt;
+      {status === 'failed' && (
+        &lt;div className="app-error"&gt;
+          &lt;p&gt;Failed to load Reddit posts: {error}&lt;/p&gt;
+          &lt;button onClick={() =&gt; dispatch(fetchPosts(subreddit))}&gt;Retry&lt;/button&gt;
+        &lt;/div&gt;
+      )}
+      &lt;Routes&gt;
+        &lt;Route path="/" element={&lt;Navigate to={`/r/${subreddit}`} replace /&gt;} /&gt;
+        &lt;Route path="/r/:subreddit" element={&lt;PostsPage /&gt;} /&gt;
+        &lt;Route path="/post/:id" element={&lt;PostDetailPage /&gt;} /&gt;
+        &lt;Route path="*" element={&lt;p&gt;Page not found. &lt;button onClick={() =&gt; navigate('/')}&gt;Home&lt;/button&gt;&lt;/p&gt;} /&gt;
+      &lt;/Routes&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;</code></pre>
+
+    <h2>src/main.jsx</h2>
+    <pre><code>import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
+import App from './App';
+import store from './store';
+import './index.css';
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  &lt;React.StrictMode&gt;
+    &lt;Provider store={store}&gt;
+      &lt;BrowserRouter&gt;
+        &lt;App /&gt;
+      &lt;/BrowserRouter&gt;
+    &lt;/Provider&gt;
+  &lt;/React.StrictMode&gt;
+);</code></pre>
+
+    <h2>src/components/Header.jsx</h2>
+    <pre><code>import { Link } from 'react-router-dom';
+
+function Header() {
+  return (
+    &lt;header className="app-header"&gt;
+      &lt;div className="hero-overlay" /&gt;
+      &lt;div className="hero-copy"&gt;
+        &lt;h1&gt;&lt;Link to="/"&gt;BattleTech Reddit & Official News&lt;/Link&gt;&lt;/h1&gt;
+        &lt;p&gt;Search Reddit threads and follow official developer updates in one place.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/header&gt;
+  );
+}
+
+export default Header;</code></pre>
+
+    <h2>src/components/SubredditSelector/SubredditSelector.JSX</h2>
+    <pre><code>import styles from './SubredditSelector.module.css';
+
+function SubredditSelector ({ setSubreddit, selectedSubreddit }) {
+    return (
+        &lt;div className = { styles ['subreddit-selector' ]}&gt;
+            &lt;button onClick={() =&gt; setSubreddit('Battletech') }&gt;r/Battletech&lt;/button&gt;
+            &lt;button onClick={() =&gt; setSubreddit('Mechwarrior')}&gt;r/Mechwarrior&lt;/button&gt;
+            &lt;button onClick={() =&gt; setSubreddit('Mechwarrior Online')}&gt;r/Mechwarrior Online&lt;/button&gt;
+            &lt;button onClick={() =&gt; setSubreddit('MechCommander')}&gt;r/MechCommander&lt;/button&gt;
+            &lt;button onClick={() =&gt; setSubreddit('Battletech Game')}&gt;r/Battletech Game&lt;/button&gt;
+            &lt;button onClick={() =&gt; setSubreddit('Battletech Lore')}&gt;r/Battletech Lore&lt;/button&gt;
+            &lt;button onClick={() =&gt; setSubreddit('Battletech Mods')}&gt;r/Battletech Mods&lt;/button&gt;
+            &lt;button onClick={() =&gt; setSubreddit('Battletech Designs')}&gt;r/Battletech Designs&lt;/button&gt;
+            &lt;button onClick={() =&gt; setSubreddit('Battletech Art')}&gt;r/Battletech Art&lt;/button&gt;
+            &lt;button onClick={() =&gt; setSubreddit('Battletech Alpha Strike')}&gt;r/Battletech Alpha Strike&lt;/button&gt;
+            &lt;button onClick={() =&gt; setSubreddit('Battletech Tabletop')}&gt;r/Battletech Tabletop&lt;/button&gt;
+            &lt;button onClick={() =&gt; setSubreddit('Battletech Miniatures')}&gt;r/Battletech Miniatures&lt;/button&gt;
+            &lt;button onClick={() =&gt; setSubreddit('Battletech Comics')}&gt;r/Battletech Comics&lt;/button&gt;
+            &lt;button onClick={() =&gt; setSubreddit('Battletech Fan Fiction')}&gt;r/Battletech Fan Fiction&lt;/button&gt;
+        &lt;/div&gt;
+    );
+}
+
+export default SubredditSelector;</code></pre>
+
+    <h2>src/features/posts/PostsPage.jsx</h2>
+    <pre><code>import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
+import { fetchPosts, selectAllPosts, selectStatus, selectError, setSearchTerm, setSelectedCategory } from './postsSlice';
+import { humanDate } from '../../utils/date';
+
+const categories = ['battletech', 'BattleTechGame', 'mechwarrior', 'boardgames', 'gaming'];
+
+function PostsPage() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { subreddit = 'popular' } = useParams();
+
+  const posts = useSelector(selectAllPosts);
+  const status = useSelector(selectStatus);
+  const error = useSelector(selectError);
+  const selectedCategory = useSelector((state) =&gt; state.posts.selectedCategory);
+  const searchTerm = useSelector((state) =&gt; state.posts.searchTerm);
+
+  const developerNews = [
+    {
+      title: 'Official BattleTech news',
+      url: 'https://www.paradoxinteractive.com/games/battletech/news',
+      source: 'Paradox Interactive',
+    },
+    {
+      title: 'Harebrained Schemes updates',
+      url: 'https://www.harebrained-schemes.com/',
+      source: 'Harebrained Schemes',
+    },
+    {
+      title: 'BattleTech Steam news',
+      url: 'https://store.steampowered.com/news/app/637090',
+      source: 'Steam News',
+    },
+    {
+      title: 'MechWarrior franchise news',
+      url: 'https://www.mechwarriorgame.com/news',
+      source: 'MechWarrior Official',
+    },
+    {
+      title: 'MechCommander legacy news',
+      url: 'https://www.mechcommander.com/',
+      source: 'MechCommander Official',
+    },
+  ];
+
+  useEffect(() =&gt; {
+    dispatch(setSelectedCategory(subreddit));
+    dispatch(fetchPosts({ subreddit, searchTerm }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, subreddit]);
+
+  const handleSearchSubmit = (event) =&gt; {
+    event.preventDefault();
+    const q = event.target.search.value.trim();
+    dispatch(setSearchTerm(q));
+    dispatch(fetchPosts({ subreddit, searchTerm: q }));
+  };
+
+  return (
+    &lt;div className="posts-page"&gt;
+      &lt;section className="controls"&gt;
+        &lt;form className="search-form" onSubmit={handleSearchSubmit}&gt;
+          &lt;input name="search" placeholder="Search posts" defaultValue={searchTerm} /&gt;
+          &lt;button type="submit"&gt;Search&lt;/button&gt;
+        &lt;/form&gt;
+
+        &lt;div className="filters" role="group" aria-label="Subreddit filter"&gt;
+          {categories.map((cat) =&gt; (
+            &lt;button
+              key={cat}
+              className={cat === selectedCategory ? 'active' : ''}
+              onClick={() =&gt; {
+                dispatch(setSelectedCategory(cat));
+                navigate(`/r/${cat}`);
+              }}
+            &gt;
+              {cat}
+            &lt;/button&gt;
+          ))}
+        &lt;/div&gt;
+      &lt;/section&gt;
+
+      &lt;section className="developer-news"&gt;
+        &lt;h2&gt;Official BattleTech, MechWarrior, and MechCommander news&lt;/h2&gt;
+        &lt;p&gt;These links point to official developer and publisher announcements beyond Reddit.&lt;/p&gt;
+        &lt;ul&gt;
+          {developerNews.map((item) =&gt; (
+            &lt;li key={item.url}&gt;
+              &lt;a href={item.url} target="_blank" rel="noreferrer"&gt;
+                {item.title}
+              &lt;/a&gt;
+              &lt;span&gt;{item.source}&lt;/span&gt;
+            &lt;/li&gt;
+          ))}
+        &lt;/ul&gt;
+      &lt;/section&gt;
+
+      &lt;section className="feed"&gt;
+        {status === 'loading' && &lt;p&gt;Loading posts…&lt;/p&gt;}
+        {status === 'failed' && &lt;p&gt;Error: {error}&lt;/p&gt;}
+        {status === 'succeeded' && posts.length === 0 && &lt;p&gt;No posts found.&lt;/p&gt;}
+
+        &lt;ul className="post-list"&gt;
+          {posts.map((post) =&gt; (
+            &lt;li key={post.id} className="post-card" onClick={() =&gt; navigate(`/post/${post.id}`)}&gt;
+              {post.thumbnail && &lt;img src={post.thumbnail} alt="thumbnail" /&gt;}
+              &lt;div className="post-content"&gt;
+                &lt;h3&gt;{post.title}&lt;/h3&gt;
+                &lt;p&gt;{post.score} points • {post.num_comments} comments&lt;/p&gt;
+                &lt;p&gt;r/{post.subreddit} • by u/{post.author} • {humanDate(post.created_utc)}&lt;/p&gt;
+              &lt;/div&gt;
+            &lt;/li&gt;
+          ))}
+        &lt;/ul&gt;
+      &lt;/section&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default PostsPage;</code></pre>
+
+    <h2>src/features/posts/PostDetailPage.jsx</h2>
+    <pre><code>import { useEffect, useMemo } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectAllPosts } from './postsSlice';
+import { fetchPostComments, selectCommentsStatus, selectComments, selectCommentsError } from './commentsSlice';
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
+import { humanDate } from '../../utils/date';
+
+function PostDetailPage() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const posts = useSelector(selectAllPosts);
+  const post = useMemo(() =&gt; posts.find((p) =&gt; p.id === id), [posts, id]);
+
+  const commentsStatus = useSelector(selectCommentsStatus);
+  const comments = useSelector(selectComments);
+  const commentsError = useSelector(selectCommentsError);
+
+  useEffect(() =&gt; {
+    if (post) dispatch(fetchPostComments(post.permalink));
+  }, [post, dispatch]);
+
+  if (!post) {
+    return (
+      &lt;div className="post-detail-page"&gt;
+        &lt;p&gt;Post not found. &lt;button onClick={() =&gt; navigate(-1)}&gt;Back&lt;/button&gt;&lt;/p&gt;
+      &lt;/div&gt;
+    );
+  }
+
+  const html = post.selftext ? DOMPurify.sanitize(marked.parse(post.selftext || '', { breaks: true })) : '&lt;p&gt;No text content available.&lt;/p&gt;';
+
+  return (
+    &lt;div className="post-detail-page"&gt;
+      &lt;button className="back-button" onClick={() =&gt; navigate(-1)}&gt;← Back&lt;/button&gt;
+
+      &lt;article className="post-detail-card"&gt;
+        &lt;h2&gt;{post.title}&lt;/h2&gt;
+        &lt;p&gt;r/{post.subreddit} • u/{post.author} • {humanDate(post.created_utc)}&lt;/p&gt;
+        &lt;div className="post-body" dangerouslySetInnerHTML={{ __html: html }} /&gt;
+        &lt;p&gt;
+          &lt;strong&gt;{post.score}&lt;/strong&gt; points • &lt;strong&gt;{post.num_comments}&lt;/strong&gt; comments
+        &lt;/p&gt;
+        &lt;a href={`https://reddit.com${post.permalink}`} target="_blank" rel="noreferrer"&gt;Open on Reddit&lt;/a&gt;
+      &lt;/article&gt;
+
+      &lt;section className="comments-section"&gt;
+        &lt;h3&gt;Comments&lt;/h3&gt;
+        {commentsStatus === 'loading' && &lt;p&gt;Loading comments...&lt;/p&gt;}
+        {commentsStatus === 'failed' && &lt;p&gt;Error: {commentsError}&lt;/p&gt;}
+        {commentsStatus === 'succeeded' && comments.map((c) =&gt; (
+          &lt;div key={c.id} className="comment-card"&gt;
+            &lt;p&gt;&lt;strong&gt;u/{c.author}&lt;/strong&gt; • {humanDate(c.created_utc)}&lt;/p&gt;
+            &lt;div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked.parse(c.body_html || c.body || '', { breaks: true })) }} /&gt;
+          &lt;/div&gt;
+        ))}
+      &lt;/section&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default PostDetailPage;</code></pre>
   </body>
 </html>
