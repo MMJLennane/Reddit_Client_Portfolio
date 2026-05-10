@@ -13,6 +13,7 @@ body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, sans-s
 .filters button { background: #264c82; border:transparent; border-radius:999px; color:#dbe9ff; padding:.4rem .8rem; cursor:pointer; }
 .filters button.active { background:#0079d3; }
 .feed { margin-top:1rem; }
+.image-header {background-image: url('/src/assets/games-icons-1-battletech-png-icon.png'); background-size: cover; background-position: center; height: 200px; border-radius: 10px; margin-bottom: 1rem; }
 .post-list { list-style:none; padding:0; margin:0; display:grid; gap:.8rem; }
 .post-card { display:flex; background: rgba(255,255,255,.05); border-radius:10px; padding:.9rem; align-items:center; gap:.8rem; cursor:pointer; transition: transform .1s ease, box-shadow .2s ease; }
 .post-card:hover { transform: translateY(-2px); box-shadow:0 8px 20px rgba(0,0,0,.22); }
