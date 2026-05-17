@@ -132,5 +132,5 @@ body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, sans-s
 .p { text-align: center; margin: 0.75rem auto; max-width: 600px; color: #a8b9e7; }
 .divider { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-top: 1.5rem; }
 .img { align-items: center; display: block; margin: 1rem auto; max-width: 100%; border-radius: 8px; }
-.a { color: #a9d4ff; font-weight: 600; text-decoration: none; }
+.a { color: #a9d4ff; font-weight: 600; text-decoration: none; justify-content: center; display: flex; }
 .a:hover { text-decoration: underline; }
