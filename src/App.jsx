@@ -1,38 +1,23 @@
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchPosts, selectStatus, selectError } from './features/posts/postsSlice';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import PostsPage from './features/posts/PostsPage';
 import PostDetailPage from './features/posts/PostDetailPage';
+import HomePage from './features/home/HomePage';
+import CreatorsPage from './features/creators/CreatorsPage';
+import CreatorDetailPage from './features/creators/CreatorDetailPage';
 import Header from './components/Header';
-import SubredditSelector from './components/SubredditSelector/SubredditSelector.JSX';
 
 function App() {
-  const dispatch = useDispatch();
-  const status = useSelector(selectStatus);
-  const error = useSelector(selectError);
   const navigate = useNavigate();
-  const [subreddit, setSubreddit] = useState('Battletech');
-
-  useEffect(() => {
-    dispatch(fetchPosts(subreddit));
-  }, [dispatch, subreddit]);
 
   return (
     <div className="app-shell">
-
       <Header />
-      <SubredditSelector selectedSubreddit={subreddit} onSubredditChange={setSubreddit} />
-      {status === 'failed' && (
-        <div className="app-error">
-          <p>Failed to load Reddit posts: {error}</p>
-          <button onClick={() => dispatch(fetchPosts(subreddit))}>Retry</button>
-        </div>
-      )}
       <Routes>
-        <Route path="/" element={<Navigate to={`/r/${subreddit}`} replace />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/r/:subreddit" element={<PostsPage />} />
         <Route path="/post/:id" element={<PostDetailPage />} />
+        <Route path="/creators" element={<CreatorsPage />} />
+        <Route path="/creators/:slug" element={<CreatorDetailPage />} />
         <Route path="*" element={<p>Page not found. <button onClick={() => navigate('/')}>Home</button></p>} />
       </Routes>
     </div>

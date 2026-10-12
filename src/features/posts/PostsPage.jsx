@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { fetchPosts, selectAllPosts, selectStatus, selectError, setSearchTerm, setSelectedCategory } from './postsSlice';
+import { fetchPosts, selectAllPosts, selectStatus, selectError, setSearchTerm } from './postsSlice';
 import { humanDate } from '../../utils/date';
-
-const categories = ['battletech', 'BattleTechGame', 'mechwarrior', 'boardgames', 'gaming'];
+import SubredditSelector from '../../components/SubredditSelector/SubredditPicker';
 
 function PostsPage() {
   const dispatch = useDispatch();
@@ -14,7 +13,6 @@ function PostsPage() {
   const posts = useSelector(selectAllPosts);
   const status = useSelector(selectStatus);
   const error = useSelector(selectError);
-  const selectedCategory = useSelector((state) => state.posts.selectedCategory);
   const searchTerm = useSelector((state) => state.posts.searchTerm);
 
   const developerNews = [
@@ -46,9 +44,7 @@ function PostsPage() {
   ];
 
   useEffect(() => {
-    dispatch(setSelectedCategory(subreddit));
     dispatch(fetchPosts({ subreddit, searchTerm }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, subreddit]);
 
   const handleSearchSubmit = (event) => {
@@ -66,20 +62,10 @@ function PostsPage() {
           <button type="submit">Search</button>
         </form>
 
-        <div className="filters" role="group" aria-label="Subreddit filter">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              className={cat === selectedCategory ? 'active' : ''}
-              onClick={() => {
-                dispatch(setSelectedCategory(cat));
-                navigate(`/r/${cat}`);
-              }}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+        <SubredditSelector
+          selectedSubreddit={subreddit}
+          onSubredditChange={(selected) => navigate(`/r/${selected}`)}
+        />
       </section>
 
       <section className="developer-news">
@@ -101,6 +87,11 @@ function PostsPage() {
         {status === 'loading' && <p>Loading posts…</p>}
         {status === 'failed' && <p>Error: {error}</p>}
         {status === 'succeeded' && posts.length === 0 && <p>No posts found.</p>}
+        {status === 'failed' && (
+          <button type="button" className="retry-button" onClick={() => dispatch(fetchPosts({ subreddit, searchTerm }))}>
+            Retry
+          </button>
+        )}
 
         <ul className="post-list">
           {posts.map((post) => (
