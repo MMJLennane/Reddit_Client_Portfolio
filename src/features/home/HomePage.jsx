@@ -48,7 +48,7 @@ function HomePage() {
             <span className="history-year">1984</span>
             <h3>The tabletop game</h3>
             <p>
-              FASA publishes the original game of tactical ’Mech combat.
+              FASA publishes the original game of tactical Battledroid before changing its name to BattleTech.
               Players command machines, manage heat and ammunition, and shape
               battles across a detailed science-fiction setting.
             </p>
@@ -158,7 +158,7 @@ function HomePage() {
             <img src={stoneRhino} alt="Stone Rhino, also known as the Behemoth" />
             <div>
               <h3>The Stone Rhino</h3>
-              <p>A heavily armed Clan Smoke Jaguar assault ’Mech, also known as the Behemoth.</p>
+              <p>The Stone Rhino, also known as the Behemoth, quite possibly my favorite battle mech and with Big Red-40TECH devolving its history just helps give the BattleTech lore depth.</p>
               <a href="https://youtu.be/W2F2e1VqJEE?si=vmxKtitFy1LBhrut" target="_blank" rel="noopener noreferrer">
                 Watch Big Red-40TECH’s history video
               </a>
